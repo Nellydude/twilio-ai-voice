@@ -12,7 +12,7 @@ export default async function handler(req, res) {
       Hi, thanks for calling. How can I help you today?
     </Say>
   </Gather>
-  <Say language="en-US">
+<Say voice="Polly.Joanna" language="en-US">
     I didn't hear anything. Goodbye.
   </Say>
   <Hangup/>
@@ -71,14 +71,14 @@ If you're not certain about something, say you're not sure instead of inventing 
   // NEW: answer + ask if there’s anything else → allows multi-turn calls
   const twimlResponse = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say language="en-US">
+ <Say voice="Polly.Joanna" language="en-US">
     ${aiReply}
-  </Say>
+</Say>
   <Gather input="speech" action="/api/voice" method="POST" timeout="7">
 </Gather>
-  <Say language="en-US">
+<Say voice="Polly.Joanna" language="en-US">
     Thanks for calling, goodbye.
-  </Say>
+</Say>
   <Hangup/>
 </Response>`;
 
