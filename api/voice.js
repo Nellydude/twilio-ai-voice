@@ -8,11 +8,11 @@ export default async function handler(req, res) {
     const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Gather input="speech" action="/api/voice" method="POST" timeout="5">
-    <Say language="en-US">
+    <Say voice="Polly.Joanna" language="en-US">
       Hi, thanks for calling. How can I help you today?
     </Say>
   </Gather>
-<Say voice="Polly.Joanna" language="en-US">
+  <Say voice="Polly.Joanna" language="en-US">
     I didn't hear anything. Goodbye.
   </Say>
   <Hangup/>
@@ -68,17 +68,33 @@ If you're not certain about something, say you're not sure instead of inventing 
     }
   }
 
-  // NEW: answer + ask if there’s anything else → allows multi-turn calls
+  // Random follow-up prompts to make the agent sound natural
+  const followups = [
+    "Is there anything else I can help you with?",
+    "What else can I help you with today?",
+    "Do you have any other questions?",
+    "Is there something more you'd like to know?",
+    "Anything else I can assist you with?",
+    "What else can I do for you?",
+    "Would you like help with anything else?"
+  ];
+
+  const randomFollowup = followups[Math.floor(Math.random() * followups.length)];
+
+  // Answer + ask if there’s anything else → allows multi-turn calls
   const twimlResponse = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
- <Say voice="Polly.Joanna" language="en-US">
+  <Say voice="Polly.Joanna" language="en-US">
     ${aiReply}
-</Say>
+  </Say>
   <Gather input="speech" action="/api/voice" method="POST" timeout="7">
-</Gather>
-<Say voice="Polly.Joanna" language="en-US">
+    <Say voice="Polly.Joanna" language="en-US">
+      ${randomFollowup}
+    </Say>
+  </Gather>
+  <Say voice="Polly.Joanna" language="en-US">
     Thanks for calling, goodbye.
-</Say>
+  </Say>
   <Hangup/>
 </Response>`;
 
