@@ -1,7 +1,9 @@
 export default async function handler(req, res) {
   const hasSpeechResult = req.body && req.body.SpeechResult;
+  const userText = hasSpeechResult ? (req.body.SpeechResult || "") : "";
+  const apiKey = process.env.OPENAI_API_KEY;
 
-  // First time Twilio hits this: ask the caller what they need
+  // First time Twilio hits this: greet and ask what they need
   if (!hasSpeechResult) {
     const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
@@ -20,10 +22,7 @@ export default async function handler(req, res) {
     return res.status(200).send(twiml);
   }
 
-  // Second time: Twilio sends what the caller said as text
-  const userText = req.body.SpeechResult || "";
-  const apiKey = process.env.OPENAI_API_KEY;
-
+  // After the caller says something: use AI to answer
   let aiReply = "Sorry, I'm having trouble answering right now.";
 
   if (!apiKey) {
@@ -69,10 +68,19 @@ If you're not certain about something, say you're not sure instead of inventing 
     }
   }
 
+  // NEW: answer + ask if there’s anything else → allows multi-turn calls
   const twimlResponse = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Say language="en-US">
     ${aiReply}
+  </Say>
+  <Gather input="speech" action="/api/voice" method="POST" timeout="7">
+    <Say language="en-US">
+      Is there anything else I can help you with? You can ask another question, or say "that's all" and hang up when you're done.
+    </Say>
+  </Gather>
+  <Say language="en-US">
+    Thanks for calling, goodbye.
   </Say>
   <Hangup/>
 </Response>`;
