@@ -75,10 +75,7 @@ If you're not certain about something, say you're not sure instead of inventing 
     ${aiReply}
   </Say>
   <Gather input="speech" action="/api/voice" method="POST" timeout="7">
-    <Say language="en-US">
-      Is there anything else I can help you with? You can ask another question, or say "that's all" and hang up when you're done.
-    </Say>
-  </Gather>
+</Gather>
   <Say language="en-US">
     Thanks for calling, goodbye.
   </Say>
